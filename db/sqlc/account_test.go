@@ -3,6 +3,7 @@ package sqlc
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"simpleBank/db/util"
 	"testing"
 	"time"
@@ -57,6 +58,9 @@ func TestListAccounts(t *testing.T) {
 		Offset: 5,
 	}
 	accounts, err := testQueries.ListAccounts(context.Background(), arg)
+	for _, v := range accounts {
+		fmt.Println(v)
+	}
 	require.NoError(t, err)
 	require.Len(t, accounts, 5)
 	for _, act := range accounts {
