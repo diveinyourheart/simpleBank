@@ -3,7 +3,6 @@ package sqlc
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"simpleBank/util"
 	"testing"
 	"time"
@@ -51,21 +50,24 @@ func TestGetAccount(t *testing.T) {
 }
 
 func TestListAccounts(t *testing.T) {
+	var lastAccount Account
 	for i := 0; i < 10; i++ {
-		CreateRandomAccount(t)
+		lastAccount = CreateRandomAccount(t)
 	}
 	arg := ListAccountsParams{
+		Owner:  lastAccount.Owner,
 		Limit:  5,
-		Offset: 5,
+		Offset: 0,
 	}
 	accounts, err := testQueries.ListAccounts(context.Background(), arg)
-	for _, v := range accounts {
-		fmt.Println(v)
-	}
+	// for _, v := range accounts {
+	// 	fmt.Println(v)
+	// }
 	require.NoError(t, err)
-	require.Len(t, accounts, 5)
+	require.NotEmpty(t, accounts)
 	for _, act := range accounts {
 		require.NotEmpty(t, act)
+		require.Equal(t, lastAccount.Owner, act.Owner)
 	}
 }
 

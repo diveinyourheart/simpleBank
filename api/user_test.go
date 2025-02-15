@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"simpleBank/authtoken"
 	mockdb "simpleBank/db/mock"
 	db "simpleBank/db/sqlc"
 	"simpleBank/util"
@@ -50,6 +51,7 @@ func TestCreateUserAPI(t *testing.T) {
 	testCases := []struct {
 		name          string
 		body          gin.H
+		setupAuth     func(t *testing.T, request *http.Request, tokenMaker authtoken.Maker)
 		buildStubs    func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
@@ -72,6 +74,9 @@ func TestCreateUserAPI(t *testing.T) {
 					Times(1).
 					Return(user, nil)
 			},
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker authtoken.Maker) {
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
+			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
 				requireBodyMatchUser(t, recorder.Body, user)
@@ -92,6 +97,7 @@ func TestCreateUserAPI(t *testing.T) {
 		request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(jsondata))
 		require.NoError(t, err)
 
+		tc.setupAuth(t, request, server.tokenMaker)
 		server.router.ServeHTTP(recorder, request)
 		tc.checkResponse(t, recorder)
 	}
