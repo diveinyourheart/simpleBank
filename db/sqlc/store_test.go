@@ -10,8 +10,8 @@ import (
 
 func TestTransferTx(t *testing.T) {
 	store := NewStore(testDB)
-	account1 := createRandomAccount(t)
-	account2 := createRandomAccount(t)
+	account1 := CreateRandomAccount(t)
+	account2 := CreateRandomAccount(t)
 	fmt.Println(">> before: ", account1.Balance, account2.Balance)
 
 	n := 5
@@ -109,8 +109,8 @@ func TestTransferTx(t *testing.T) {
 // 防止死锁的最好方法时通过确保我们的应用程序总是以一致的顺序获取锁
 func TestTransferTxDeadLock(t *testing.T) {
 	store := NewStore(testDB)
-	account1 := createRandomAccount(t)
-	account2 := createRandomAccount(t)
+	account1 := CreateRandomAccount(t)
+	account2 := CreateRandomAccount(t)
 	fmt.Println(">> before: ", account1.Balance, account2.Balance)
 
 	n := 10

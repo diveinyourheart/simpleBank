@@ -3,7 +3,7 @@ package sqlc
 import (
 	"context"
 	"database/sql"
-	"simpleBank/db/util"
+	"simpleBank/util"
 	"testing"
 	"time"
 
@@ -11,7 +11,7 @@ import (
 )
 
 func createRandomEntry(t *testing.T) Entry {
-	account := createRandomAccount(t)
+	account := CreateRandomAccount(t)
 	arg := CreateEntryParams{
 		AccountID: sql.NullInt64{
 			Int64: account.ID,
@@ -70,7 +70,7 @@ func TestGetEntry(t *testing.T) {
 }
 
 func TestListEntries(t *testing.T) {
-	account := createRandomAccount(t)
+	account := CreateRandomAccount(t)
 	for i := 0; i < 10; i++ {
 		createEntryForSpecificAccountID(t, account.ID)
 	}

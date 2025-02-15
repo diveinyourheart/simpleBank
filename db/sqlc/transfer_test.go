@@ -3,7 +3,7 @@ package sqlc
 import (
 	"context"
 	"database/sql"
-	"simpleBank/db/util"
+	"simpleBank/util"
 	"testing"
 	"time"
 
@@ -11,8 +11,8 @@ import (
 )
 
 func createRandomTransfer(t *testing.T) Transfer {
-	account1 := createRandomAccount(t)
-	account2 := createRandomAccount(t)
+	account1 := CreateRandomAccount(t)
+	account2 := CreateRandomAccount(t)
 	arg := CreateTransferParams{
 		FromAccountID: sql.NullInt64{
 			Int64: account1.ID,
@@ -78,8 +78,8 @@ func TestGetTransfer(t *testing.T) {
 }
 
 func TestListTransfers(t *testing.T) {
-	account1 := createRandomAccount(t)
-	account2 := createRandomAccount(t)
+	account1 := CreateRandomAccount(t)
+	account2 := CreateRandomAccount(t)
 	from_account := account1.ID
 	to_account := account2.ID
 	for i := 0; i < 10; i++ {

@@ -1,0 +1,99 @@
+在 Go 语言中，**Mock 包**（如 [`gomock`](https://github.com/golang/mock) 或 [`testify/mock`](https://github.com/stretchr/testify)）的核心作用是 **生成模拟对象（Mock Objects）**，用于在单元测试中替代真实的依赖项（如数据库、外部服务、接口等），从而实现以下目标：
+
+---
+
+### 1. **隔离测试环境**
+- **问题**：单元测试需要隔离被测代码与其依赖项（如数据库、HTTP 服务），避免因外部依赖的不稳定性（如网络延迟、数据变化）导致测试不可靠。
+- **Mock 的作用**：通过模拟依赖接口的行为，完全控制其返回值或错误，使测试仅关注被测逻辑。
+
+---
+
+### 2. **模拟复杂场景**
+- **问题**：某些场景难以在真实环境中复现（如数据库超时、接口返回特定错误码）。
+- **Mock 的作用**：直接模拟这些场景，例如：
+  ```go
+  // 模拟数据库返回 "余额不足" 错误
+  mockStore.EXPECT().TransferTx(gomock.Any(), gomock.Any()).Return(nil, errors.New("insufficient balance"))
+  ```
+
+---
+
+### 3. **验证交互行为**
+- **问题**：需要确保被测代码正确调用了依赖的方法（如是否传递了正确的参数、调用了特定次数）。
+- **Mock 的作用**：记录方法调用信息，并通过断言验证是否符合预期：
+  ```go
+  // 验证 TransferTx 方法被调用了一次，且参数符合预期
+  mockStore.EXPECT().TransferTx(ctx, expectedArg).Times(1).Return(result, nil)
+  ```
+
+---
+
+### 结合你的代码示例
+假设你的代码中有以下接口和实现：
+```go
+type Store interface {
+    Querier
+    TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+}
+
+type SQLStore struct {
+    *Queries
+    db *sql.DB
+}
+
+func NewStore(db *sql.DB) Store {
+    return &SQLStore{db: db, Queries: New(db)}
+}
+```
+
+#### 使用 Mock 包的典型场景：
+1. **生成 Mock 对象**：
+   - 用 `gomock` 生成 `Store` 接口的 Mock 实现：
+     ```bash
+     mockgen -source=store.go -destination=mock_store.go -package=db
+     ```
+   - 生成的 `MockStore` 会实现 `Store` 接口的所有方法。
+
+2. **在测试中注入 Mock**：
+   ```go
+   func TestTransfer(t *testing.T) {
+       ctrl := gomock.NewController(t)
+       defer ctrl.Finish()
+
+       // 创建 MockStore 对象
+       mockStore := db.NewMockStore(ctrl)
+
+       // 设置期望：当 TransferTx 被调用时，返回特定结果
+       mockStore.EXPECT().TransferTx(gomock.Any(), gomock.Any()).
+           Return(db.TransferTxResult{...}, nil)
+
+       // 将被测服务与 MockStore 绑定
+       service := NewService(mockStore)
+
+       // 执行测试逻辑
+       result, err := service.Transfer(...)
+       require.NoError(t, err)
+       // 验证结果...
+   }
+   ```
+
+---
+
+### 主流 Mock 工具对比
+| 工具           | 特点                                                                 |
+|----------------|----------------------------------------------------------------------|
+| **`gomock`**   | 需预生成代码，强类型，适合接口明确的场景，需配合 `go generate` 使用。 |
+| **`testify`**  | 更灵活，支持动态生成 Mock，无需预生成代码，但类型安全性稍弱。         |
+
+---
+
+### Mock 包的核心价值
+1. **加速测试**：避免启动真实数据库或外部服务。
+2. **精准测试**：覆盖边界条件（如超时、错误重试）。
+3. **减少依赖**：独立运行测试，无需复杂环境搭建。
+4. **提升可维护性**：当接口变更时，Mock 生成工具会帮助发现不兼容的调用。
+
+---
+
+### 总结
+Mock 包是 Go 单元测试的关键工具，它通过模拟依赖接口的行为，使测试更专注、可靠和高效。结合接口的隐式实现特性，Mock 能显著提升代码的可测试性和可维护性。
