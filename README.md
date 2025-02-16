@@ -166,4 +166,6 @@ HTTP（HyperText Transfer Protocol）方法是客户端与服务器通信时使�
 
 -- 使用migrate更新数据库表结构（包括添加新表，添加外键）
 migrate create -ext sql -dir db/migration -seq add_users
+-- 升级migrate
+brew upgrade golang-migrate
 
