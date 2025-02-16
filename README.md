@@ -163,7 +163,7 @@ HTTP（HyperText Transfer Protocol）方法是客户端与服务器通信时使�
 
 ---
 
--- 在windows powershell 使用scoop(网址：https://scoop.sh/)下载
+-- 在windows powershell 使用scoop(网址：https://scoop.sh)下载
    与更新migrate
    下载命令：scoop install migrate
    更新命令：scoop update migrate
