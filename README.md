@@ -161,7 +161,7 @@ HTTP（HyperText Transfer Protocol）方法是客户端与服务器通信时使�
 4. **跨域请求**：
    - 使用 `OPTIONS` 进行预检请求。
 
----
+-----------------------------------------------------------------------------------------------------------------------
 
 -- 在windows powershell 使用scoop(网址：https://scoop.sh/ )下载
    与更新migrate
@@ -172,7 +172,41 @@ HTTP（HyperText Transfer Protocol）方法是客户端与服务器通信时使�
 
 migrate create -ext sql -dir db/migration -seq add_users
 
--- 升级migrate
+-----------------------------------------------------------------------------------------------------------------------
 
-brew upgrade golang-migrate
+一条经验法则：永远不要将更改直接推送到主分支
+当研究新功能时（working on new feature），我们应该从master创建一个新的独立分支
+并且只有在正确测试和审查新代码后才将其合并回来
+要创建一个新分支，我们运行：git checkout -b [分支名]
+
+docker build -t simplebank:latest . 当前文件路径下有Dockerfile，根据Dockerfile
+中的信息创建image并命名为simplebank:latest，"."意味着当前目录路径
+
+docker rm [name]删除容器
+
+docker rmi [name]删除image
+
+docker container inspect [容器名] 查看对应容器的网络设置
+
+docker run --name simplebank -p 8080:8080 -e GIN_MODE=release 
+-e DB_SOURCE="postgresql://root:123456@localhost:5432/simple_bank?sslmode=disable" 
+simplebank:latest 在当前窗口运行image对应的容器，-e为环境变量参数，这里设置gin模式为release，
+意味着软件正式对外发布，相对的是debug模式，另外一个环境变量是与数据库进程通信的链接，
+simplebank项目通过viper读取.env文件中内容来加载常量，通过添加这个环境变量可以覆盖掉
+.env文件中的DB_SOURCE关键字对应的常量
+
+docker network ls 可以看到默认的桥接网络
+
+docker network inspect bridge 可以看到关于这个网络的更多细节
+
+docker create network [name] 创建一个网络
+
+docker network connect bank-network [name] 将容器连接到bank-network网络
+
+docker run --name simplebank --network bank-network -p 8080:8080 
+-e GIN_MODE=release 
+-e DB_SOURCE="postgresql://root:123456@postgres1:5432/simple_bank?sslmode=disable" 
+simplebank:latest 这条命令的--network参数使得该容器链接到bank-work网络
+这使得simplebank和postgres1在同一网络下，此时simplebank网络可以通过
+容器名找到postgres1容器，需要将链接中的ip地址改为容器名
 
