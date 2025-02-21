@@ -8,7 +8,6 @@ import (
 	"simpleBank/util"
 
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -41,18 +40,13 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		return nil, status.Errorf(codes.Internal, "failed to make refresh token: %v", err)
 	}
 
-	var user_agent, client_IP string
-	p, ok := peer.FromContext(ctx)
-	if ok {
-		client_IP = p.Addr.String()
-	}
-
+	mtdt := server.extractMetadata(ctx)
 	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
 		ID:           refreshPayload.ID,
 		Username:     user.Username,
 		RefreshToken: refreshToken,
-		UserAgent:    user_agent,
-		ClientIp:     client_IP,
+		UserAgent:    mtdt.UserAgent,
+		ClientIp:     mtdt.ClientIP,
 		IsBlocked:    false,
 		ExpiresAt:    refreshPayload.ExpiredAt,
 	})
