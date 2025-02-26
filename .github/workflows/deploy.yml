@@ -23,9 +23,7 @@ jobs:
         password: "${{ secrets.REGISTRY_PASSWORD }}"
     - name: Build and push image
       env:
-        ACR_REGISTRY: ${{ aliyun2027953875 }}
-        ACR_REPOSITORY: docker_for_simplebank
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $ACR_REGISTRY/$ACR_REPOSITORY/demo:$IMAGE_TAG .
-        docker push $ACR_REGISTRY/$ACR_REPOSITORY/demo:$IMAGE_TAG
+        docker build -t crpi-6dwawfkhz2xd5x3e.cn-shanghai.personal.cr.aliyuncs.com/xinyuan_he/docker_for_simplebank:$IMAGE_TAG .
+        docker push crpi-6dwawfkhz2xd5x3e.cn-shanghai.personal.cr.aliyuncs.com/xinyuan_he/docker_for_simplebank:$IMAGE_TAG
