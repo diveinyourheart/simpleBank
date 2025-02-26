@@ -1,0 +1,28 @@
+name: Deploy to production
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Login to ACR
+      uses: aliyun/acr-login@v1
+      with:
+        login-server: crpi-6dwawfkhz2xd5x3e.cn-shanghai.personal.cr.aliyuncs.com/xinyuan_he/docker_for_simplebank
+        username: "${{ secrets.REGISTRY_USERNAME }}"
+        password: "${{ secrets.REGISTRY_PASSWORD }}"
+    - name: Build and push image
+      env:
+        ACR_REGISTRY: ${{ crpi-6dwawfkhz2xd5x3e.cn-shanghai.personal.cr.aliyuncs.com/xinyuan_he/docker_for_simplebank }}
+        ACR_REPOSITORY: docker_for_simplebank
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ACR_REGISTRY/$ACR_REPOSITORY/demo:$IMAGE_TAG .
+        docker push $ACR_REGISTRY/$ACR_REPOSITORY/demo:$IMAGE_TAG
