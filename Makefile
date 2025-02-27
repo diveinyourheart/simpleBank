@@ -5,13 +5,13 @@ createdb:
 dropdb:
 	docker exec -it postgres1 dropdb simple_bank
 migrateup:
-	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/simple_bank?sslmode=disable" -verbose up
+	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose up
 migrateup1:
-	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/simple_bank?sslmode=disable" -verbose up 1
+	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose up 1
 migratedown:
-	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/simple_bank?sslmode=disable" -verbose down
+	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose down
 migratedown1:
-	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
+	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose down 1
 sqlc:
 	sqlc generate
 test:
