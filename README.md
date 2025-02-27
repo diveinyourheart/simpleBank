@@ -1,3 +1,226 @@
+
+以下是一些常见的 Git 命令，它们可以帮助你进行版本控制、分支管理、合并等操作：
+
+### **1. 配置 Git**
+- **配置用户名和邮箱**：在首次使用 Git 时，需要设置全局用户名和邮箱。
+  ```bash
+  git config --global user.name "Your Name"
+  git config --global user.email "you@example.com"
+  ```
+  
+- **查看配置**：
+  ```bash
+  git config --list
+  ```
+
+### **2. 克隆和初始化仓库**
+- **克隆一个远程仓库**：
+  ```bash
+  git clone <repository_url>
+  ```
+
+- **初始化本地 Git 仓库**：
+  ```bash
+  git init
+  ```
+
+### **3. 分支管理**
+- **查看当前分支**：
+  ```bash
+  git branch
+  ```
+
+- **创建并切换到新分支**：
+  ```bash
+  git checkout -b <branch_name>
+  ```
+
+- **切换到已有分支**：
+  ```bash
+  git checkout <branch_name>
+  ```
+
+- **切换分支（使用 `git switch`）**：
+  ```bash
+  git switch <branch_name>
+  ```
+
+- **删除本地分支**：
+  ```bash
+  git branch -d <branch_name>  # 如果分支未合并，使用 -D 强制删除
+  ```
+
+- **删除远程分支**：
+  ```bash
+  git push origin --delete <branch_name>
+  ```
+
+### **4. 查看和修改状态**
+- **查看当前工作区的状态**：
+  ```bash
+  git status
+  ```
+
+- **查看提交历史**：
+  ```bash
+  git log
+  ```
+
+- **查看某个文件的历史**：
+  ```bash
+  git log <file_name>
+  ```
+
+- **查看差异**（查看未提交的更改）：
+  ```bash
+  git diff
+  ```
+
+### **5. 提交和暂存**
+- **添加文件到暂存区**：
+  ```bash
+  git add <file_name>    # 添加单个文件
+  git add .              # 添加当前目录下所有更改的文件
+  ```
+
+- **提交更改**：
+  ```bash
+  git commit -m "Commit message"
+  ```
+
+- **跳过暂存区直接提交**（仅限于修改已跟踪文件）：
+  ```bash
+  git commit -a -m "Commit message"
+  ```
+
+- **撤销对文件的更改（恢复到暂存区的状态）**：
+  ```bash
+  git checkout -- <file_name>
+  ```
+
+- **撤销暂存（将文件从暂存区移除）**：
+  ```bash
+  git reset <file_name>
+  ```
+
+### **6. 合并和重置**
+- **合并分支**：
+  ```bash
+  git merge <branch_name>
+  ```
+
+- **取消最后一次提交（保留更改）**：
+  ```bash
+  git reset --soft HEAD^
+  ```
+
+- **取消最后一次提交（删除更改）**：
+  ```bash
+  git reset --hard HEAD^
+  ```
+
+### **7. 远程仓库管理**
+- **查看远程仓库信息**：
+  ```bash
+  git remote -v
+  ```
+
+- **添加远程仓库**：
+  ```bash
+  git remote add origin <repository_url>
+  ```
+
+- **推送本地分支到远程仓库**：
+  ```bash
+  git push origin <branch_name>
+  ```
+
+- **推送所有分支**：
+  ```bash
+  git push --all
+  ```
+
+- **推送标签**：
+  ```bash
+  git push origin <tag_name>
+  ```
+
+- **拉取远程仓库最新的更改**：
+  ```bash
+  git pull origin <branch_name>
+  ```
+
+- **拉取所有远程分支**：
+  ```bash
+  git fetch
+  ```
+
+### **8. 标签管理**
+- **创建标签**：
+  ```bash
+  git tag <tag_name>
+  ```
+
+- **查看所有标签**：
+  ```bash
+  git tag
+  ```
+
+- **推送标签到远程**：
+  ```bash
+  git push origin <tag_name>
+  ```
+
+### **9. 合并冲突管理**
+- **查看冲突文件**：
+  ```bash
+  git status
+  ```
+
+- **解决冲突后标记文件已解决**：
+  ```bash
+  git add <conflicted_file>
+  ```
+
+- **完成合并**：
+  ```bash
+  git commit
+  ```
+
+### **10. 清理和优化仓库**
+- **删除本地没有使用的远程追踪分支**：
+  ```bash
+  git remote prune origin
+  ```
+
+- **清理本地仓库（删除未追踪的文件）**：
+  ```bash
+  git clean -fd
+  ```
+
+### **11. 其他常用命令**
+- **查看 Git 配置信息**：
+  ```bash
+  git config --list
+  ```
+
+- **创建并切换到新分支**：
+  ```bash
+  git checkout -b <branch_name>
+  ```
+
+- **将当前分支合并到目标分支**：
+  ```bash
+  git merge <target_branch>
+  ```
+
+- **显示所有提交和分支的图形化历史**：
+  ```bash
+  git log --graph --oneline --all
+  ```
+
+### 小结：
+这些命令涵盖了 Git 使用过程中的大多数操作，包括分支管理、文件状态查看、提交和推送、更改合并等。通过合理使用这些命令，可以让版本控制变得更高效、清晰和易于管理。如果你有任何问题或需要更深入的解释，随时可以问我！
 -----------------------------------------------------------------------------------------------------------------------
 
 从当前分支切换到另一本地分支
@@ -184,3 +407,4 @@ simplebank:latest 这条命令的--network参数使得该容器链接到bank-wor
 这使得simplebank和postgres1在同一网络下，此时simplebank网络可以通过
 容器名找到postgres1容器，需要将链接中的ip地址改为容器名
 
+docs.docker.com 可以查看docker-compose.yml文件的语法
