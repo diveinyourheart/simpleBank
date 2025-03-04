@@ -1,17 +1,25 @@
 postgres:
-	docker run --name postgres1 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=123456 -d postgres:17.2-alpine
+	sudo docker run --name postgres1 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=123456 -d postgres:17.4-alpine3.21
 createdb:
-	docker exec -it postgres1 createdb --username=root --owner=root simple_bank
+	sudo docker exec -it postgres1 createdb --username=root --owner=root simple_bank
 dropdb:
-	docker exec -it postgres1 dropdb simple_bank
+	sudo docker exec -it postgres1 dropdb simple_bank
+# migrateup:
+# 	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose up
+# migrateup1:
+# 	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose up 1
+# migratedown:
+# 	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose down
+# migratedown1:
+# 	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose down 1
 migrateup:
-	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose up
+	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/simple_bank?sslmode=disable" -verbose up
 migrateup1:
-	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose up 1
+	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/simple_bank?sslmode=disable" -verbose up 1
 migratedown:
-	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose down
+	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/simple_bank?sslmode=disable" -verbose down
 migratedown1:
-	migrate -path db/migration -database "postgresql://euphoria:He2804423941@pgm-uf667w83t57j3d38vo.pg.rds.aliyuncs.com:5432/simple_bank?sslmode=disable" -verbose down 1
+	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
 sqlc:
 	sqlc generate
 test:
@@ -21,8 +29,8 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go simpleBank/db/sqlc Store
 proto:
-	del /f /q pb\*.go
-	del /f /q doc\swagger\*.swagger.json
+	rm -f pb/*.go
+	rm -f doc/swagger/*.swagger.json
 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
     --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
 	--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \

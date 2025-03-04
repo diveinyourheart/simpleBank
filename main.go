@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -14,6 +15,9 @@ import (
 
 	_ "simpleBank/doc/statik"
 
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
 	"github.com/rakyll/statik/fs"
@@ -32,9 +36,24 @@ func main() {
 		log.Fatal("cannot connect to db:", err)
 	}
 
+	runDatabaseMigration(config.MigrationUrl, config.DBSource)
+
 	store := db.NewStore(conn)
 	go runGateWayServer(config, store)
 	runGrpcServer(config, store)
+}
+
+func runDatabaseMigration(migrationUrl string, DatabaseSourceUrl string) {
+	migration, err := migrate.New(migrationUrl, DatabaseSourceUrl)
+	if err != nil {
+		log.Fatal("cannot to create new migrate instance:", err)
+	}
+
+	if err := migration.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatal("failed to run migrate up:", err)
+	}
+
+	fmt.Println("run DB migration successfully")
 }
 
 func runGateWayServer(config util.Config, store db.Store) {
