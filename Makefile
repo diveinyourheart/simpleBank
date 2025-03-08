@@ -29,8 +29,10 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go simpleBank/db/sqlc Store
 proto:
-	rm -f pb/*.go
-	rm -f doc/swagger/*.swagger.json
+# rm -f pb/*.go
+# rm -f doc/swagger/*.swagger.json
+	del /Q pb\*.go
+	del /Q doc\swagger\*.swagger.json
 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
     --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
 	--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
@@ -38,7 +40,7 @@ proto:
 	proto/*.proto
 	statik -src=./doc/swagger -dest=./doc -f
 evans:
-	evans --host localhost --port 9090 -r repl
+	evans --host localhost --port 9080 -r repl
 grpcui:
-	grpcui -plaintext localhost:9090
+	grpcui -plaintext localhost:9080
 .PHONY:postgres createdb dropdb migrateup migratedown sqlc test server mock migratedown1 migrateup1 proto evans grpcui
