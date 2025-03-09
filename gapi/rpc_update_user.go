@@ -15,6 +15,15 @@ import (
 )
 
 func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	authPayload, err := server.authorizeUser(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
+	if authPayload.Username != req.GetUsername() {
+		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's info")
+	}
+
 	violations := validateUpdateUserRequest(req)
 	if violations != nil {
 		return nil, invalidArgumentError(violations)
@@ -74,13 +83,13 @@ func validateUpdateUserRequest(req *pb.UpdateUserRequest) (violations []*errdeta
 		}
 	}
 
-	if req.Email != nil {
+	if req.FullName != nil {
 		if err := val.ValidateFullname(req.GetFullName()); err != nil {
 			violations = append(violations, fieldViolation("full_name", err))
 		}
 	}
 
-	if req.FullName != nil {
+	if req.Email != nil {
 		if err := val.ValidateEmail(req.GetEmail()); err != nil {
 			violations = append(violations, fieldViolation("email", err))
 		}

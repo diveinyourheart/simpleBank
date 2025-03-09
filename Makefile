@@ -43,4 +43,6 @@ evans:
 	evans --host localhost --port 9080 -r repl
 grpcui:
 	grpcui -plaintext localhost:9080
-.PHONY:postgres createdb dropdb migrateup migratedown sqlc test server mock migratedown1 migrateup1 proto evans grpcui
+redis:
+	docker run --name redis -p 6379:6379 -d redis:7.4.2-alpine
+.PHONY:postgres createdb dropdb migrateup migratedown sqlc test server mock migratedown1 migrateup1 proto evans grpcui redis
