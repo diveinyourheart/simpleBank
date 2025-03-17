@@ -19,6 +19,8 @@ import (
 
 	_ "simpleBank/doc/statik"
 
+	_ "net/http/pprof"
+
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -39,6 +41,15 @@ func main() {
 	if config.Environment == "development" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
+
+	//test
+	go func() {
+		log.Info().Msg("Starting HTTP server on :6060")
+		err := http.ListenAndServe("localhost:6060", nil)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to start HTTP server on :6060")
+		}
+	}()
 
 	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
